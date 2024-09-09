@@ -1,48 +1,66 @@
-import React from "react";
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { Input, Button } from "@nextui-org/react";
+import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { auth } from "../utils/firebase";
 
 const Login = () => {
+  const Navigate = useNavigate();
+  const handleSigninWithGoogle = () => {
+    const provider = new GoogleAuthProvider();
+    signInWithPopup(auth, provider)
+      .then((result) => {
+        const credential = GoogleAuthProvider.credentialFromResult(result);
+        const token = credential.accessToken;
+        console.log("Token =>", token);
+        const user = result.user;
+        console.log("User =>", user);
+        Navigate("/");
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        const email = error.customData.email;
+        const credential = GoogleAuthProvider.credentialFromError(error);
+      });
+  };
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   return (
-    <div className="my-36 ">
-      <form className="max-w-md mx-auto">
-        <h2 className="text-center text-2xl">Enter Your Data :)</h2>
-        <div className="relative z-0 w-full mb-5 group">
-          <input
-            type="email"
-            name="floating_email"
-            id="floating_email"
-            className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-            placeholder=" "
-            required
-          />
-          <label
-            for="floating_email"
-            className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-          >
-            Email address
-          </label>
-        </div>
-        <div className="relative z-0 w-full mb-5 group">
-          <input
-            type="password"
-            name="floating_password"
-            id="floating_password"
-            className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-            placeholder=" "
-            required
-          />
-          <label
-            for="floating_password"
-            className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-          >
-            Password
-          </label>
-        </div>
-        <button
-          type="submit"
-          className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-green-500 dark:hover:bg-green-600 dark:focus:ring-green-700"
+    <div className="my-10">
+      <form className="flex flex-col items-center">
+        <Input
+          isRequired
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          type="email"
+          label="Email"
+          size="lg"
+          defaultValue="junior@nextui.org"
+          className="w-1.5/2 sm:w-2/3 py-5 self-center"
+        />
+        <Input
+          isRequired
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          type="password"
+          label="Password"
+          size="lg"
+          defaultValue="junior@nextui.org"
+          className="w-1.5/2 sm:w-2/3 py-5 self-center"
+        />
+        <Button color="primary" className="w-1/2">
+          Log In
+        </Button>
+        <h2>or</h2>
+        <Button
+          color="primary"
+          className="w-1/2"
+          onClick={handleSigninWithGoogle}
         >
-          Login
-        </button>
+          Sign in with Google
+        </Button>
       </form>
     </div>
   );
