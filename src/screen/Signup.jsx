@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { auth, createUserWithEmailAndPassword } from "../utils/firebase";
+import { auth, db } from "../utils/firebase";
+import { collection, addDoc, doc, setDoc } from "firebase/firestore";
+import { createUserWithEmailAndPassword } from "firebase/auth";
 
 const Signup = () => {
   const [email, setEmail] = useState("");
@@ -10,20 +12,40 @@ const Signup = () => {
   const [lastName, setLastName] = useState("");
   const [number, setNumber] = useState("");
   const [company, setCompany] = useState("");
+
   const Navigate = useNavigate();
   const handleSubmit = () => {
-    createUserWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        const user = userCredential.user;
-        Navigate("/");
-      })
-      .catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        alert(errorMessage);
-      });
+    if (password == repeatPassword) {
+      createUserWithEmailAndPassword(auth, email, password)
+        .then(async (userCredential) => {
+          const user = userCredential.user;
+          try {
+            console.log(" .....", user.uid);
+            const docRef = doc(db, "users", user.uid);
+            const documentAdded = await setDoc(docRef, {
+              userEmail: email,
+              userPassword: password,
+              userFirstName: firstName,
+              userLastName: lastName,
+              userNumber: number,
+              userCompany: company,
+              uid: user.uid,
+            });
+            console.log("Document written with ID: ", docRef.id);
+          } catch (e) {
+            console.error("Error adding document: ", e);
+          }
+          Navigate("/");
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          alert(errorMessage);
+        });
+    } else {
+      alert("Repeat password correctly...");
+    }
   };
-
   return (
     <div>
       <div className="max-w-md mx-auto my-12">

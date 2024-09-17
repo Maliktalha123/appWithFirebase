@@ -1,15 +1,18 @@
-import { useEffect, useState } from "react";
+import { Button } from "antd";
+import { useContext, useEffect, useState } from "react";
+import { CartContext } from "../context/CartContextProvider";
+import { Items } from "./Items";
+
 function HeroSection() {
+  const { cartItems, addItemToCart, isItemAdded } = useContext(CartContext);
+  console.log(cartItems);
   const [post, setPost] = useState([]);
   const [search, setSearch] = useState("");
   const [price, setPrice] = useState(1000);
 
   useEffect(() => {
-    fetch("https://fakestoreapi.com/products")
-      .then((res) => res.json())
-      .then((data) => setPost(data));
+    setPost(Items);
   }, []);
-
   const filtered = post.filter((data) => {
     return data.title.includes(search) && data.price <= price;
   });
@@ -36,11 +39,11 @@ function HeroSection() {
                 setPrice(e.target.value);
               }}
             >
-              <option value="100">Items under 100$</option>
-              <option value="250">Items under 250$</option>
-              <option value="500">Items under 500$</option>
-              <option value="750">Items under 750$</option>
               <option value="1000">Items under 1000$</option>
+              <option value="750">Items under 750$</option>
+              <option value="100">Items under 100$</option>
+              <option value="500">Items under 500$</option>
+              <option value="250">Items under 250$</option>
             </select>
           </div>
         </div>
@@ -66,6 +69,13 @@ function HeroSection() {
                     {data.title}
                   </h2>
                   <p className="mt-1">${data.price}</p>
+                </div>
+                <div>
+                  <Button className="my-2" onClick={() => addItemToCart(data)}>
+                    {isItemAdded(data.id)
+                      ? `Added (${isItemAdded(data.id).quantity}) + 1`
+                      : `Add to Cart`}
+                  </Button>
                 </div>
               </div>
             </div>

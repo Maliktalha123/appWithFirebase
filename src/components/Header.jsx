@@ -10,10 +10,13 @@ import {
   Button,
   Avatar,
 } from "@nextui-org/react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import { signOut } from "firebase/auth";
 import { auth } from "../utils/firebase";
+import { Badge } from "antd";
+import { ShoppingCartOutlined } from "@ant-design/icons";
+import { CartContext } from "../context/CartContextProvider";
 
 const AcmeLogo = () => (
   <svg fill="none" height="36" viewBox="0 0 32 32" width="36">
@@ -26,13 +29,21 @@ const AcmeLogo = () => (
   </svg>
 );
 
-export default function App() {
+export default function Header() {
+  const {cartItems} = useContext(CartContext)
+  const Navigate = useNavigate();
   const { user, setUser } = useContext(AuthContext);
   console.log("User in header = >", user);
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
 
+  const handleProfile = ()=>{
+  Navigate("/profile")
+
+}
+
   const handleLogout = async () => {
     await signOut(auth);
+    Navigate("/signin");
   };
 
   const menuItems = [
@@ -88,7 +99,13 @@ export default function App() {
       <NavbarContent justify="end">
         {user?.isLogin ? (
           <>
-            <Avatar  src={user?.userInfo?.photoUrl}/>
+<Link to={'/cart'}>
+<Badge count = {cartItems.length}>
+  <ShoppingCartOutlined  className="text-2xl"/>
+</Badge>
+</Link>
+
+           {/* <Button  className="rounded-xl" onClick={handleProfile}> <Avatar src={user?.userInfo?.photoUrl} /></Button> */}
             <NavbarItem className="hidden lg:flex">
               <Button color="primary" variant="light" onClick={handleLogout}>
                 Logout

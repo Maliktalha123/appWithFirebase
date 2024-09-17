@@ -1,7 +1,8 @@
 import { Spinner } from "@nextui-org/react";
 import React, { Children, createContext, useEffect, useState } from "react";
-import { auth } from "../utils/firebase";
+import { auth, db } from "../utils/firebase";
 import { onAuthStateChanged } from "firebase/auth/cordova";
+import { doc, getDoc } from "firebase/firestore";
 
 export const AuthContext = createContext();
 function AuthContextProvider({ children }) {
@@ -10,13 +11,24 @@ function AuthContextProvider({ children }) {
     userInfo: {},
   });
   const [loading, setLoading] = useState(true);
-  function onAuthChanged(user) {
+  async function onAuthChanged(user) {
     if (user) {
       console.log("User => ", user);
-      setUser({ isLogin: true, userInfo : {
-        email : user?.email,
-        photoUrl : user?.photoURL
-      } });
+      const docRef = doc(db, "users", user.uid);
+      const userInfo = await getDoc(docRef);
+      console.log("userInfo->", userInfo.data());
+      setUser({
+        isLogin: true,
+        ...userInfo.data(),
+      });
+
+
+      // setUser({ isLogin: true, userInfo : {
+      //   email : user?.email,
+      //   photoUrl : user?.photoURL,
+      //   userId : user?.uid
+
+      // } });
     } else {
       setUser({ isLogin: false, userInfo: {} });
     }

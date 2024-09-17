@@ -1,11 +1,13 @@
-import React from 'react'
+import React, { useContext } from "react";
+import AuthContextProvider from "../context/AuthContext";
 
 const Footer = () => {
-  return (
-    <div>
-      
-    </div>
-  )
-}
+  // console.log("User = >", user);
+  // console.log("User = >", user);
 
-export default Footer
+  return <div>
+    
+  </div>;
+};
+
+export default Footer;
