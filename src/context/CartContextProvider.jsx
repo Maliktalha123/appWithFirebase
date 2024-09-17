@@ -4,17 +4,21 @@ export const CartContext = createContext();
 
 function CartContextProvider({ children }) {
   const [cartItems, setCartItems] = useState([]);
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  useEffect(() => {
+    if (isLoaded) {
+      localStorage.setItem("cartItems", JSON.stringify(cartItems));
+    }
+  }, [cartItems]);
 
   useEffect(() => {
     const items = localStorage.getItem("cartItems");
     if (items) {
       setCartItems([...JSON.parse(items)]);
+      setIsLoaded(true);
     }
   }, []);
-
-  useEffect(() => {
-    localStorage.setItem("cartItems", JSON.stringify(cartItems));
-  }, [cartItems]);
 
   function addItemToCart(item) {
     const arr = cartItems;
@@ -26,7 +30,12 @@ function CartContextProvider({ children }) {
     }
     setCartItems([...arr]);
   }
-
+  function lessQuanityFromCart(id) {
+    const arr = cartItems;
+    const productIndex = cartItems.findIndex((data) => data.id == id);
+    arr[productIndex].quantity--;
+    setCartItems([...arr]);
+  }
   function removeItemFromCart(id) {
     const arr = cartItems;
     const productIndex = cartItems.findIndex((data) => data.id == id);
@@ -47,6 +56,7 @@ function CartContextProvider({ children }) {
     <CartContext.Provider
       value={{
         cartItems,
+        lessQuanityFromCart,
         addItemToCart,
         removeItemFromCart,
         isItemAdded,
