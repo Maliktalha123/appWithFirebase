@@ -7,15 +7,18 @@ import {
   NavbarMenu,
   NavbarContent,
   NavbarItem,
-  Button,
   Avatar,
 } from "@nextui-org/react";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import { signOut } from "firebase/auth";
 import { auth } from "../utils/firebase";
-import { Badge } from "antd";
-import { ShoppingCartOutlined } from "@ant-design/icons";
+import { Badge, Button, Tooltip } from "antd";
+import {
+  MoonOutlined,
+  SearchOutlined,
+  ShoppingCartOutlined,
+} from "@ant-design/icons";
 import { CartContext } from "../context/CartContextProvider";
 
 const AcmeLogo = () => (
@@ -30,16 +33,15 @@ const AcmeLogo = () => (
 );
 
 export default function Header() {
-  const {cartItems} = useContext(CartContext)
+  const { cartItems } = useContext(CartContext);
   const Navigate = useNavigate();
   const { user, setUser } = useContext(AuthContext);
   console.log("User in header = >", user);
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
 
-  const handleProfile = ()=>{
-  Navigate("/profile")
-
-}
+  const handleProfile = () => {
+    Navigate("/profile");
+  };
 
   const handleLogout = async () => {
     await signOut(auth);
@@ -94,18 +96,21 @@ export default function Header() {
             Integrations
           </Link>
         </NavbarItem>
+        <NavbarItem>
+          Theme
+        </NavbarItem>
       </NavbarContent>
 
       <NavbarContent justify="end">
         {user?.isLogin ? (
           <>
-<Link to={'/cart'}>
-<Badge count = {cartItems.length}>
-  <ShoppingCartOutlined  className="text-2xl"/>
-</Badge>
-</Link>
+            <Link to={"/cart"}>
+              <Badge count={cartItems.length}>
+                <ShoppingCartOutlined className="text-2xl" />
+              </Badge>
+            </Link>
 
-           {/* <Button  className="rounded-xl" onClick={handleProfile}> <Avatar src={user?.userInfo?.photoUrl} /></Button> */}
+            {/* <Button  className="rounded-xl" onClick={handleProfile}> <Avatar src={user?.userInfo?.photoUrl} /></Button> */}
             <NavbarItem className="hidden lg:flex">
               <Button color="primary" variant="light" onClick={handleLogout}>
                 Logout

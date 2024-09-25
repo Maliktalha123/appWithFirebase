@@ -16,8 +16,8 @@ function Cart() {
   );
 
   return (
-    <div className="container mx-auto my-5">
-      <h1 className="font-medium text-3xl underline">Cart Items</h1>
+    <div className="container mx-auto my-5 ">
+      <h1 className="font-medium text-3xl text-center underline text-blue-600">Cart Items</h1>
 
       <div className="flex gap-5 my-5">
         <div className="flex-grow flex flex-col border p-4 justify-center items-center">
@@ -39,7 +39,7 @@ function Cart() {
 
       {cartItems.map((data) => (
         <div key={data.id} className="flex items-center border my-2 p-3">
-          <Image src={data.image} height={200} width={200} />
+          <Image src={data.image} height={120} width={120} />
 
           <div className="flex flex-col pl-5">
             <h1 className="font-medium text-xl mb-2">
